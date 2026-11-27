@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 
@@ -31,6 +30,12 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Render sets this automatically for every web service, so the
+# onrender.com domain is always allowed without manual configuration.
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -52,10 +57,12 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+    # CorsMiddleware must come before any middleware that can generate
+    # responses (SecurityMiddleware redirects, WhiteNoise, CommonMiddleware).
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -93,7 +100,7 @@ if DATABASE_URL:
         "default": dj_database_url.parse(
             DATABASE_URL,
             conn_max_age=600,
-            ssl_require=True,
+            ssl_require=not DEBUG,
         )
     }
 else:
