@@ -1,0 +1,36 @@
+@"
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.*
+
+# Allow example environment files
+!.env.example
+
+# Django
+staticfiles/
+media/
+*.log
+
+# Frontend
+node_modules/
+dist/
+build/
+.env.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+"@ | Set-Content .gitignore
